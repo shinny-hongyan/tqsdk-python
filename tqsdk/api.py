@@ -28,7 +28,6 @@ import re
 import ssl
 import sys
 import time
-import uuid
 from datetime import datetime
 from typing import Union, List, Any, Optional
 
@@ -41,11 +40,12 @@ import websockets
 from tqsdk.account import TqAccount
 from tqsdk.backtest import TqBacktest, TqReplay
 from tqsdk.channel import TqChan
-from tqsdk.entity import Entity
 from tqsdk.diff import TqDiff
+from tqsdk.entity import Entity
 from tqsdk.objs import Quote, Kline, Tick, Account, Position, Order, Trade
 from tqsdk.sim import TqSim
 from tqsdk.tqwebhelper import TqWebHelper
+from tqsdk.utils import _generate_uuid
 from .__version__ import __version__
 
 
@@ -464,7 +464,7 @@ class TqApi(object):
         serial = self._requests["klines"].get(request, None)
         pack = {
             "aid": "set_chart",
-            "chart_id": chart_id if chart_id is not None else self._generate_chart_id("realtime"),
+            "chart_id": chart_id if chart_id is not None else _generate_uuid(TqApi.RD, "PYSDK_realtime"),
             "ins_list": ",".join(symbol),
             "duration": dur_id,
             "view_width": data_length if len(symbol) == 1 else 8964,
@@ -549,7 +549,7 @@ class TqApi(object):
         serial = self._requests["ticks"].get(request, None)
         pack = {
             "aid": "set_chart",
-            "chart_id": chart_id if chart_id is not None else self._generate_chart_id("realtime"),
+            "chart_id": chart_id if chart_id is not None else _generate_uuid(TqApi.RD, "PYSDK_realtime"),
             "ins_list": symbol,
             "duration": 0,
             "view_width": data_length,
@@ -621,7 +621,7 @@ class TqApi(object):
             raise Exception("下单手数(volume) %s 错误, 请检查 volume 是否填写正确" % (volume))
         limit_price = float(limit_price) if limit_price is not None else None
         if not order_id:
-            order_id = self._generate_order_id()
+            order_id = _generate_uuid(TqApi.RD)
         (exchange_id, instrument_id) = symbol.split(".", 1)
         msg = {
             "aid": "insert_order",
@@ -1595,7 +1595,7 @@ class TqApi(object):
             try:
                 async with websockets.connect(url, **keywords) as client:
                     # 发送网络连接建立的通知，code = 2019112901
-                    notify_id = uuid.UUID(int=TqApi.RD.getrandbits(128)).hex
+                    notify_id = _generate_uuid(TqApi.RD)
                     notify = {
                         "type": "MESSAGE",
                         "level": "INFO",
@@ -1733,7 +1733,7 @@ class TqApi(object):
             # 而这里的 except 又需要处理所有子函数及子函数的子函数等等可能抛出的例外, 因此这里只能遇到问题之后再补, 并且无法避免 false positive 和 false negative
             except (websockets.exceptions.ConnectionClosed, OSError):
                 # 发送网络连接断开的通知，code = 2019112911
-                notify_id = uuid.UUID(int=TqApi.RD.getrandbits(128)).hex
+                notify_id = _generate_uuid(TqApi.RD)
                 notify = {
                     "type": "MESSAGE",
                     "level": "WARNING",
@@ -1844,17 +1844,6 @@ class TqApi(object):
         }
 
     @staticmethod
-    def _generate_chart_id(module):
-        """生成chart id"""
-        chart_id = "PYSDK_" + module + "_" + uuid.UUID(int=TqApi.RD.getrandbits(128)).hex
-        return chart_id
-
-    @staticmethod
-    def _generate_order_id():
-        """生成order id"""
-        return uuid.UUID(int=TqApi.RD.getrandbits(128)).hex
-
-    @staticmethod
     def _deep_copy_dict(source, dest):
         for key, value in source.items():
             if isinstance(value, Entity):
@@ -1918,7 +1907,7 @@ class TqApi(object):
             api.draw_text(klines, "测试413423", x=indic, y=value, color=0xFF00FF00)
         """
         if id is None:
-            id = uuid.UUID(int=TqApi.RD.getrandbits(128)).hex
+            id = _generate_uuid(TqApi.RD)
         if y is None:
             y = base_k_dataframe["close"].iloc[-1]
         serial = {
@@ -1961,7 +1950,7 @@ class TqApi(object):
             width (int): 线宽度, 可选, 缺省为 1
         """
         if id is None:
-            id = uuid.UUID(int=TqApi.RD.getrandbits(128)).hex
+            id = _generate_uuid(TqApi.RD)
         serial = {
             "type": line_type,
             "x1": self._offset_to_x(base_k_dataframe, x1),
@@ -2012,7 +2001,7 @@ class TqApi(object):
             y2=klines.iloc[-1].close, width=1, color=0xFF0000FF, bg_color=0x8000FF00)
         """
         if id is None:
-            id = uuid.UUID(int=TqApi.RD.getrandbits(128)).hex
+            id = _generate_uuid()
         serial = {
             "type": "BOX",
             "x1": self._offset_to_x(base_k_dataframe, x1),

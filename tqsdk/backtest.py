@@ -460,6 +460,7 @@ class TqReplay(object):
         if self._replay_dt.weekday() >= 5:
             # 0~6, 检查周末[5,6] 提前抛错退出
             raise Exception("无法创建复盘服务器，请检查复盘日期后重试。")
+        self._default_speed = 1
         self._api = None
 
     def _create_server(self, api):
@@ -469,9 +470,9 @@ class TqReplay(object):
         self._ins_url = "http://%s:%d/t/rmd/replay/session/%s/symbol" % (session["ip"], session["session_port"], session["session"])
         self._md_url = "ws://%s:%d/t/rmd/front/mobile" % (session["ip"], session["gateway_web_port"])
         self._server_status = None
-        self._server_status = self._wait_server_status_change(None, 30)
+        self._server_status = self._wait_server_status(["initializing", "running"], 30)
         if self._server_status == "initializing":
-            self._server_status = self._wait_server_status_change("initializing", 30)
+            self._server_status = self._wait_server_status("running", 30)
         if self._server_status == "running":
             return self._ins_url, self._md_url
         else:
@@ -480,7 +481,7 @@ class TqReplay(object):
     async def _run(self):
         try:
             self._send_chan = TqChan(self._api)
-            self._send_chan.send_nowait({"aid": "ratio", "speed": 1})
+            self._send_chan.send_nowait({"aid": "ratio", "speed": self._default_speed})
             _senddata_task = self._api.create_task(self._senddata_handler())
             while True:
                 await self._send_chan.send({"aid": "heartbeat"})
@@ -501,16 +502,17 @@ class TqReplay(object):
         else:
             raise Exception("创建复盘服务器失败，请检查复盘日期后重试。")
 
-    def _wait_server_status_change(self, origin_status, timeout):
-        '''同步函数，等待复盘服务状态改变，服务器状态不是 origin_status 时返回最新的服务器状态, 最多等待 timeout 秒'''
+    def _wait_server_status(self, target_status, timeout):
+        '''同步函数，等待复盘服务状态改变，target_status 可以是 str / list, 最多等待 timeout 秒'''
+        target_status = [target_status] if isinstance(target_status, str) else target_status
         deadline = time.time() + timeout
         while deadline > time.time():
             server_status = self._get_server_status()
-            if server_status == origin_status:
-                time.sleep(1)
-            else:
+            if server_status in target_status:
                 return server_status
-        return origin_status
+            else:
+                time.sleep(1)
+        return None
 
     def _get_server_status(self):
         try:
@@ -558,4 +560,5 @@ class TqReplay(object):
         if self._api:
             self._send_chan.send_nowait({"aid": "ratio", "speed": speed})
         else:
-            raise Exception("请在 TqApi 初始化之后调用, replay.set_replay_speed 方法。")
+            # _api 未初始化，只记录用户设定的速度，在复盘服务器启动完成后，发动请求
+            self._default_speed = speed

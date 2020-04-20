@@ -76,6 +76,7 @@ jobs:
         cd tqsdk/test
         python -W ignore::DeprecationWarning -m pytest --no-print-logs \
           --ignore=./api/log_file/ \
+          --ignore=./demo/examples_log_file \
           --log-level=DEBUG \
           --log-file=./../../${{ env.TESTLOGPATH }}${{ env.TESTLOGNAME }}.log
 

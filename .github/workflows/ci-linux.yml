@@ -1,4 +1,4 @@
-name: Linux Build Test and Deploy
+name: Test and Deployment
 
 on:
   push:
@@ -84,6 +84,7 @@ jobs:
         path: ${{ env.TESTLOGPATH }}
 
   deploy:
+    needs: test
     strategy:
       matrix:
         python-version: [3.6.x]

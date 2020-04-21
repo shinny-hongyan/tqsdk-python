@@ -117,6 +117,20 @@ jobs:
       env:
         CI: true
 
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{matrix.envinfo.python-version}}
+        architecture: ${{matrix.envinfo.python-arch}}
+        
+    - name: Install dependencies
+      run: |
+        git lfs install
+        git lfs pull
+        python -m pip install --upgrade pip wheel setuptools pytest
+        python -m pip install -r requirements.txt
+        python -m pip install Sphinx==2.3.1 autodocsumm sphinx_rtd_theme jieba
+
     - name: Build wheel on linux platform
       run: |
         pip list

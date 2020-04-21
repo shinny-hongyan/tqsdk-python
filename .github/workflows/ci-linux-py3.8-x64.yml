@@ -1,0 +1,32 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - '*'
+    tags:
+      - '*'
+  pull_request:
+    branches:
+      - 'master'
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        envinfo:
+          - { name: 'linux-3.8-x64', os: ubuntu-latest, python-version: 3.6.x, python-arch: x64, TZ: 'Asia/Shanghai' }
+
+    env:
+        PYTHONIOENCODING: "utf-8"
+        PYTHONHASHSEED: 32
+        TZ: ${{ matrix.envinfo.TZ }}
+        TESTLOGPATH: "./log_archive/"
+        TESTLOGNAME: ${{ matrix.envinfo.name }}
+
+    runs-on: ${{ matrix.envinfo.os }}
+
+    steps:
+    - name: Install dependencies
+      run: |
+        echo "test2 is ok"

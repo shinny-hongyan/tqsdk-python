@@ -1,4 +1,4 @@
-name: Test and Deployment
+name: Test and Deployment(Linux-py3.6-x64)
 
 on:
   push:

@@ -1,4 +1,4 @@
-name: Test
+name: Test(Win-py3.6-x64)
 
 on:
   push:

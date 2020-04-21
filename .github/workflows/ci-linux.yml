@@ -69,6 +69,7 @@ jobs:
 
     - name: Run test case
       timeout-minutes: 60
+      shell: bash
       run: |
         mkdir -p ${{ env.TESTLOGPATH }}
         cd tqsdk/test

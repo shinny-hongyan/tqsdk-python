@@ -73,11 +73,11 @@ jobs:
       run: |
         mkdir -p ${{ env.TESTLOGPATH }}
         cd tqsdk/test
-        python -W ignore::DeprecationWarning -m pytest --no-print-logs \
-          --ignore=./api/log_file/ \
-          --ignore=./demo/examples_log_file \
-          --log-level=DEBUG \
-          --log-file=./../../${{ env.TESTLOGPATH }}${{ env.TESTLOGNAME }}.log
+      # python -W ignore::DeprecationWarning -m pytest --no-print-logs \
+      #    --ignore=./api/log_file/ \
+      #    --ignore=./demo/examples_log_file \
+      #    --log-level=DEBUG \
+      #    --log-file=./../../${{ env.TESTLOGPATH }}${{ env.TESTLOGNAME }}.log
 
     - name: Upload log to artifact
       if: always()
@@ -120,8 +120,8 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v1
       with:
-        python-version: ${{matrix.envinfo.python-version}}
-        architecture: ${{matrix.envinfo.python-arch}}
+        python-version: ${{matrix.python-version}}
+        architecture: ${{matrix.python-arch}}
         
     - name: Install dependencies
       run: |

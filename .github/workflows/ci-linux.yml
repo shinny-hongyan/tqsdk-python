@@ -16,17 +16,17 @@ jobs:
       matrix:
         envinfo:
           - { name: 'linux-3.6-x64', os: ubuntu-latest, python-version: 3.6.x, python-arch: x64, TZ: 'Asia/Shanghai' }
-          #- { name: 'linux-3.7-x64', os: ubuntu-latest, python-version: 3.7.x, python-arch: x64, TZ: 'Asia/Shanghai' }
-          #- { name: 'linux-3.8-x64', os: ubuntu-latest, python-version: 3.8.x, python-arch: x64, TZ: 'Asia/Shanghai' }
-          #- { name: 'macos-3.6-x64', os: macos-latest, python-version: 3.6.x, python-arch: x64, TZ: 'Asia/Shanghai' }
-          #- { name: 'macos-3.7-x64', os: macos-latest, python-version: 3.7.x, python-arch: x64, TZ: 'Asia/Shanghai' }
-          #- { name: 'macos-3.8-x64', os: macos-latest, python-version: 3.8.x, python-arch: x64, TZ: 'Asia/Shanghai' }
-          #- { name: 'windows-3.6-x86', os: windows-latest, python-version: 3.6.x, python-arch: x86, TZ: 'CST-8' }
-          #- { name: 'windows-3.6-x64', os: windows-latest, python-version: 3.6.x, python-arch: x64, TZ: 'CST-8' }
-          #- { name: 'windows-3.7-x86', os: windows-latest, python-version: 3.7.x, python-arch: x86, TZ: 'CST-8' }
-          #- { name: 'windows-3.7-x64', os: windows-latest, python-version: 3.7.x, python-arch: x64, TZ: 'CST-8' }
-          #- { name: 'windows-3.8-x86', os: windows-latest, python-version: 3.8.x, python-arch: x86, TZ: 'CST-8' }
-          #- { name: 'windows-3.8-x64', os: windows-latest, python-version: 3.8.x, python-arch: x64, TZ: 'CST-8' }
+          - { name: 'linux-3.7-x64', os: ubuntu-latest, python-version: 3.7.x, python-arch: x64, TZ: 'Asia/Shanghai' }
+          - { name: 'linux-3.8-x64', os: ubuntu-latest, python-version: 3.8.x, python-arch: x64, TZ: 'Asia/Shanghai' }
+          - { name: 'macos-3.6-x64', os: macos-latest, python-version: 3.6.x, python-arch: x64, TZ: 'Asia/Shanghai' }
+          - { name: 'macos-3.7-x64', os: macos-latest, python-version: 3.7.x, python-arch: x64, TZ: 'Asia/Shanghai' }
+          - { name: 'macos-3.8-x64', os: macos-latest, python-version: 3.8.x, python-arch: x64, TZ: 'Asia/Shanghai' }
+          - { name: 'windows-3.6-x86', os: windows-latest, python-version: 3.6.x, python-arch: x86, TZ: 'CST-8' }
+          - { name: 'windows-3.6-x64', os: windows-latest, python-version: 3.6.x, python-arch: x64, TZ: 'CST-8' }
+          - { name: 'windows-3.7-x86', os: windows-latest, python-version: 3.7.x, python-arch: x86, TZ: 'CST-8' }
+          - { name: 'windows-3.7-x64', os: windows-latest, python-version: 3.7.x, python-arch: x64, TZ: 'CST-8' }
+          - { name: 'windows-3.8-x86', os: windows-latest, python-version: 3.8.x, python-arch: x86, TZ: 'CST-8' }
+          - { name: 'windows-3.8-x64', os: windows-latest, python-version: 3.8.x, python-arch: x64, TZ: 'CST-8' }
 
     env:
         PYTHONIOENCODING: "utf-8"
@@ -66,18 +66,17 @@ jobs:
         git lfs pull
         python -m pip install --upgrade pip wheel setuptools pytest
         python -m pip install -r requirements.txt
-        python -m pip install Sphinx==2.3.1 autodocsumm sphinx_rtd_theme jieba
 
     - name: Run test case
       timeout-minutes: 60
       run: |
         mkdir -p ${{ env.TESTLOGPATH }}
         cd tqsdk/test
-      # python -W ignore::DeprecationWarning -m pytest --no-print-logs \
-      #    --ignore=./api/log_file/ \
-      #    --ignore=./demo/examples_log_file \
-      #    --log-level=DEBUG \
-      #    --log-file=./../../${{ env.TESTLOGPATH }}${{ env.TESTLOGNAME }}.log
+        python -W ignore::DeprecationWarning -m pytest --no-print-logs \
+          --ignore=./api/log_file/ \
+          --ignore=./demo/examples_log_file \
+          --log-level=DEBUG \
+          --log-file=./../../${{ env.TESTLOGPATH }}${{ env.TESTLOGNAME }}.log
 
     - name: Upload log to artifact
       if: always()
@@ -127,7 +126,7 @@ jobs:
       run: |
         git lfs install
         git lfs pull
-        python -m pip install --upgrade pip wheel setuptools pytest
+        python -m pip install --upgrade pip wheel setuptools
         python -m pip install -r requirements.txt
         python -m pip install Sphinx==2.3.1 autodocsumm sphinx_rtd_theme jieba
 

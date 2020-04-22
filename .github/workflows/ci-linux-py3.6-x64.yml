@@ -1,4 +1,4 @@
-name: Test and Deployment(Linux-py3.6-x64)
+name: Test and Deploy(Linux-py3.6-x64)
 
 on:
   push:
@@ -61,7 +61,7 @@ jobs:
       shell: bash
       run: |
         mkdir -p ${{ env.TESTLOGPATH }}
-        python -W ignore::DeprecationWarning -m pytest ./tqsdk/test --no-print-logs\
+        python -W ignore::DeprecationWarning -m pytest ./tqsdk/test --capture=sys\
           --doctest-glob='test_*.py' \
           --log-level=DEBUG \
           --log-file=${{ env.TESTLOGPATH }}${{ env.TESTLOGNAME }}.log

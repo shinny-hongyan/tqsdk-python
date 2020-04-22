@@ -1,0 +1,7 @@
+    - name: Package web
+      run: |
+        cd ./web/
+        yarn install --frozen-lockfile
+        yarn run build
+      env:
+        CI: true

@@ -1,0 +1,36 @@
+name: Test(Linux-py3.7-x64)
+
+on:
+  push:
+    branches:
+      - '*'
+    tags:
+      - '*'
+  pull_request:
+    branches:
+      - 'master'
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        envinfo:
+          - { name: 'linux-3.7-x64', os: ubuntu-latest, python-version: 3.7.x, python-arch: x64, TZ: 'Asia/Shanghai' }
+
+    env:
+        PYTHONIOENCODING: "utf-8"
+        PYTHONHASHSEED: 32
+        TZ: ${{ matrix.envinfo.TZ }}
+        TESTLOGPATH: "./log_archive/"
+        TESTLOGNAME: ${{ matrix.envinfo.name }}
+
+    runs-on: ${{ matrix.envinfo.os }}
+
+    steps: 
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Checkout file size
+      uses: actionsdesk/lfs-warning@v1.1
+      with:
+        filesizelimit: '3145728' # 3 MB

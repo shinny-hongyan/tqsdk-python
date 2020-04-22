@@ -30,9 +30,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Check files size
-      run: |
-        
+    - name: Checkout file size
+      uses: actionsdesk/lfs-warning@v1.1
+      with:
+        filesizelimit: '3145728' # 3 MB
 
     - name: Setup Node.js 12.x
       uses: actions/setup-node@v1

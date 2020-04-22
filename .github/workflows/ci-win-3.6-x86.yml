@@ -61,7 +61,7 @@ jobs:
       shell: bash
       run: |
         mkdir -p ${{ env.TESTLOGPATH }}
-        python -W ignore::DeprecationWarning -m pytest ./tqsdk/test --show-capture=no \
+        python -W ignore::DeprecationWarning -m pytest ./tqsdk/test --no-print-logs \
           --doctest-glob='test_*.py' \
           --log-level=DEBUG \
           --log-file=${{ env.TESTLOGPATH }}${{ env.TESTLOGNAME }}.log
